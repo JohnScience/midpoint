@@ -50,7 +50,7 @@ Thus, to pinpoint the desired rounding behavior one should specify
 
 Altogether, this amounts to astounding **10** different rounding behaviors **AND** even greater number of implementations if one accounts for implementations relying on frequently encountered assumptions.
 
-The main potential negative impact of this combinatorial explosion is the codebloat that may arise in the codebase of the users of the crate. In order to prevent the codebloat, library users must have a straightforward way to use only the functions that they need and be warned against using too high variety of them.
+The main potential negative impact of this combinatorial explosion is the codebloat that may arise in the codebase of the users of the crate. In order to prevent the codebloat, the library must provide its users with a straightforward way to use only the functions that they need and warn the users against using too high variety of them.
 
 ### Defaults
 
