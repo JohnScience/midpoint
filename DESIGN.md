@@ -1,7 +1,7 @@
 # What the crate should provide
 
 The crate should provide functions that would allow to get midpoint with either no assumptions or with some
-common assumptions about the arguments.
+common assumptions about the arguments (think of safe and unsafe functions).
 
 # Qualities
 
@@ -20,7 +20,7 @@ In the discussion "Average function for primitives"[^1], [Christopher Durham aka
 * Round down (towards `MIN`);
 * Round towards `0`;
 
-and [user16251] proposed another dimension for the rounding behavior: rounding towards even, which as they claim
+and [user16251] proposed another dimension for the rounding behavior, *rounding towards even*, which as they claim
 can be useful for fixed-point arithmetic.
 
 ### Systematization
@@ -37,7 +37,7 @@ Thus, to pinpoint the desired rounding behavior one should specify
      * Round towards `a` (`lhs`);
      * Round towards `b` (`rhs`);
 
-2. whether it should gravitate towards even values:
+2. And whether it should gravitate towards even values:
 
 * Non-existent "even affinity" ([stipulative definition](https://www.ucfmapper.com/education/various-types-definitions/#:~:text=Stipulative%20definitions))
 
@@ -45,6 +45,12 @@ Thus, to pinpoint the desired rounding behavior one should specify
 * Gravitational "even affinity"
 
     The final midpoint is guaranteed to be even.
+
+#### Summary
+
+Altogether, this amounts to astounding **10** different rounding behaviors **AND** even greater number of implementations if one accounts for implementations relying on frequently encountered assumptions.
+
+The main potential negative impact of this combinatorial explosion is the codebloat that may arise in the codebase of the users of the crate. In order to prevent the codebloat, library users must have a straightforward way to use only the functions that they need and be warned against using too high variety of them.
 
 ### Defaults
 
