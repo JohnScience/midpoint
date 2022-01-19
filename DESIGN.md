@@ -86,7 +86,7 @@ However, $a+b$ cannot be guaranteed to be computed without overflow.
 
 where \$fn_name and \$t are [identifier and type designator](https://doc.rust-lang.org/rust-by-example/macros/designators.html), respectively, and `u8::PrimitivePromotion` is `u16`, `i64::PrimitivePromotion` is `i128`, while `PrimitivePromotion` trait is not implemented for `u128` and `i128`.
 
-As opposed to naive implementation, the implementation relying on primitive promotion is not defined for `u128` and `i128` yet it works as intended even when the sum of arguments does not fit into the original type \$t. The reason for that is that the sum is computed using the primitive promotion of \$t, where the overflow cannot happen given the arguments fit in \$t.
+As opposed to naive implementation, the implementation relying on primitive promotion is not defined for `u128` and `i128` yet it works as intended even when the sum of arguments does not fit into the original type \$t. The reason for that is that the sum is computed using the primitive promotion of \$t, where the overflow cannot happen given the arguments fit in \$t. The exact assembly can be found on [godbo.lt](https://godbolt.org/z/75h45e1no), where one can also run [llvm-mca](https://www.youtube.com/watch?v=Ku2D8bjEGXk) on the assembly for the purpose of static performance analysis.
 
 # Saved work
 
