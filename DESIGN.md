@@ -70,7 +70,7 @@ pub /*unsafe*/ fn $fn_name(a: &$t, b: &$t) -> $t {
 
 where \$fn_name and \$t are [identifier and type designator](https://doc.rust-lang.org/rust-by-example/macros/designators.html), respectively.
 
-Arguably, it is the most efficient implementation when the sum of $a$ and $b$ can be stored (= calculated without overflow) in the original type. For primitive integers, the computation roughly amounts to loading the values into registers, performing a single add followed by a right shift by 1. The exact assembly can be found on [godbo.lt](https://godbolt.org/z/7Mzjvoe9P), where one can also run [llvm-mca](https://www.youtube.com/watch?v=Ku2D8bjEGXk) on the assembly for the purpose of static performance analysis.
+Arguably, it is the most efficient implementation when the sum of $a$ and $b$ can be stored (= calculated without overflow) in the original type. For primitive integers, the computation roughly amounts to loading the values into registers, performing a single add followed by a right shift by 1. The exact assembly can be found on [godbo.lt](https://godbolt.org/z/7Mzjvoe9P), where one can also run [llvm-mca] on the assembly for the purpose of static performance analysis.
 
 However, $a+b$ cannot be guaranteed to be computed without overflow.
 
@@ -86,7 +86,23 @@ However, $a+b$ cannot be guaranteed to be computed without overflow.
 
 where \$fn_name and \$t are [identifier and type designator](https://doc.rust-lang.org/rust-by-example/macros/designators.html), respectively, and `u8::PrimitivePromotion` is `u16`, `i64::PrimitivePromotion` is `i128`, while `PrimitivePromotion` trait is not implemented for `u128` and `i128`.
 
-As opposed to naive implementation, the implementation relying on primitive promotion is not defined for `u128` and `i128` yet it works as intended even when the sum of arguments does not fit into the original type \$t. The reason for that is that the sum is computed using the primitive promotion of \$t, where the overflow cannot happen given the arguments fit in \$t. The exact assembly can be found on [godbo.lt](https://godbolt.org/z/75h45e1no), where one can also run [llvm-mca](https://www.youtube.com/watch?v=Ku2D8bjEGXk) on the assembly for the purpose of static performance analysis.
+As opposed to naive implementation, the implementation relying on primitive promotion is not defined for `u128` and `i128` yet it works as intended even when the sum of arguments does not fit into the original type \$t. The reason for this is that the sum is computed using the primitive promotion of \$t, where the overflow cannot happen given the arguments fit in \$t. The exact assembly can be found on [godbo.lt](https://godbolt.org/z/75h45e1no), where one can also run [llvm-mca] on the assembly for the purpose of static performance analysis.
+
+### Implementation via wrapping sum of of right-shifted arguments and the LSB-masked bitwise AND of the arguments
+
+```rust
+    pub fn $fn_name(a: &$t, b: &$t) -> $t {
+        (a >> 1).wrapping_add(b >> 1).wrapping_add(a & b & 0x1)
+    }
+```
+
+where \$fn_name and \$t are [identifier and type designator](https://doc.rust-lang.org/rust-by-example/macros/designators.html), respectively. The implementation was provided by [Eli Dupree](https://internals.rust-lang.org/u/elidupree) and relies on [wrapping_add], and [LSB]-[masked][bitmask] (meaning with all non-[LSB] bits masked off) bitwise AND of the arguments ("a & b & 0x1").
+
+As opposed to previous implementations, the implementation via wrapping sum of of right-shifted arguments and the LSB-masked bitwise AND of the arguments produces the desired result regardless of the choice of primitive integer type, including signed integer types and 128-bit bit integers. For primitive signed integers, right shift (">>") corresponds to `SAR` (as opposed to `SHR` for unsigned integers) processor instruction when the compilation target uses x86 instruction set or its extension. The exact assembly can be found on [godbo.lt](https://godbo.lt/z/d133cP7oY), where one can also run [llvm-mca] on the assembly for the purpose of static performance analysis.
+
+### Implementation via unchecked sum of of right-shifted arguments and the LSB-masked bitwise AND of the arguments
+
+
 
 # Saved work
 
@@ -100,3 +116,9 @@ As opposed to naive implementation, the implementation relying on primitive prom
 
 [CAD97]: https://internals.rust-lang.org/u/CAD97
 [user16251]: https://internals.rust-lang.org/u/user16251
+
+[llvm-mca]: https://www.youtube.com/watch?v=Ku2D8bjEGXk
+
+[wrapping_add]: https://doc.rust-lang.org/std/primitive.u32.html#method.wrapping_add
+[LSB]: https://en.wikipedia.org/wiki/Bit_numbering#:~:text=In%20computing%2C%20the%20least%20significant,1s%20place%20of%20the%20integer.&text=The%20LSB%20is%20sometimes%20referred,digits%20further%20to%20the%20right.
+[bitmask]: https://en.wikipedia.org/wiki/Mask_(computing)
