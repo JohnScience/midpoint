@@ -52,7 +52,23 @@ Altogether, this amounts to astounding **10** different rounding behaviors **AND
 
 The main potential negative impact of this combinatorial explosion is the codebloat that may arise in the codebase of the users of the crate. In order to prevent the codebloat, the library must provide its users with a straightforward way to use only the functions that they need and warn the users against using too high variety of them.
 
-### Defaults
+## Parallelism
+
+All implementations are meant to be used in single-threaded environment.
+
+# Implementations
+
+## Integers
+
+### Naïve implementation
+
+$$(a+b)/2$$
+
+Arguably, it is the most efficient implementation when the sum of $a$ and $b$ can be stored (= calculated without overflow) in the original type. For primitive integers, the computation roughly amounts to loading the values into registers, performing a single add followed by a right shift by 1. The exact assembly can be found on [godbo.lt](https://godbolt.org/z/7Mzjvoe9P), where one can also run [llvm-mca](https://www.youtube.com/watch?v=Ku2D8bjEGXk) on the assembly for the purpose of static performance analysis.
+
+However, $a+b$ cannot be guaranteed to be computed without overflow.
+
+# Saved work
 
 [CAD97] gave the following opinion:
 
