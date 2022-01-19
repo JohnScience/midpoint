@@ -62,11 +62,31 @@ All implementations are meant to be used in single-threaded environment.
 
 ### Naïve implementation
 
-$$(a+b)/2$$
+```rust
+pub /*unsafe*/ fn $fn_name(a: &$t, b: &$t) -> $t {
+    (a+b)/2
+}
+```
+
+where \$fn_name and \$t are [identifier and type designator](https://doc.rust-lang.org/rust-by-example/macros/designators.html), respectively.
 
 Arguably, it is the most efficient implementation when the sum of $a$ and $b$ can be stored (= calculated without overflow) in the original type. For primitive integers, the computation roughly amounts to loading the values into registers, performing a single add followed by a right shift by 1. The exact assembly can be found on [godbo.lt](https://godbolt.org/z/7Mzjvoe9P), where one can also run [llvm-mca](https://www.youtube.com/watch?v=Ku2D8bjEGXk) on the assembly for the purpose of static performance analysis.
 
 However, $a+b$ cannot be guaranteed to be computed without overflow.
+
+### Implementation relying on primitive promotion
+
+```rust
+    pub fn $fn_name(a: &$t, b: &$t) -> $t {
+        let a = *a as <$t as PrimitivePromotion>::PrimitivePromotion;
+        let b = *b as <$t as PrimitivePromotion>::PrimitivePromotion;
+        ((a+b)/2) as $t
+    }
+```
+
+where \$fn_name and \$t are [identifier and type designator](https://doc.rust-lang.org/rust-by-example/macros/designators.html), respectively, and `u8::PrimitivePromotion` is `u16`, `i64::PrimitivePromotion` is `i128`, while `PrimitivePromotion` trait is not implemented for `u128` and `i128`.
+
+As opposed to naive implementation, the implementation relying on primitive promotion is not defined for `u128` and `i128` yet it works as intended even when the sum of arguments does not fit into the original type \$t. The reason for that is that the sum is computed using the primitive promotion of \$t, where the overflow cannot happen given the arguments fit in \$t.
 
 # Saved work
 
