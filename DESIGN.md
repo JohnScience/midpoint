@@ -131,9 +131,9 @@ As opposed to previous implementations, the implementation via wrapping sum of o
     }
 ```
 
-where \$fn_name and \$t are [identifier and type designator](https://doc.rust-lang.org/rust-by-example/macros/designators.html), respectively. This implementation is nearly identical to that of [Eli Dupree], yet instead of [wrapping_add] this implementation utilizes feature-gated unsafe [unchecked_add]. As the comment explains, [wrapping_add] restricts the implementation of addition, unlike [unchecked_add]. While these implementations produce the same assembly for x86 instruction set, [the author]
+where \$fn_name and \$t are [identifier and type designator](https://doc.rust-lang.org/rust-by-example/macros/designators.html), respectively.
 
-The exact assembly can be found on [godbo.lt](https://godbolt.org/z/5bx8M7G5h), where one can also run [llvm-mca] on the assembly for the purpose of static performance analysis.
+This implementation is nearly identical to that of [Eli Dupree], yet instead of [wrapping_add] this implementation utilizes feature-gated unsafe [unchecked_add]. As the comment explains, [wrapping_add] restricts the implementation of addition, unlike [unchecked_add]. While these implementations produce the same assembly for x86 instruction set, [the author] is convinced that [unchecked_add] is better because the overflow is impossible in this case (and the proof is provided). The exact assembly can be found on [godbo.lt](https://godbolt.org/z/5bx8M7G5h), where one can also run [llvm-mca] on the assembly for the purpose of static performance analysis.
 
 # Saved work
 
