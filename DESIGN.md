@@ -96,13 +96,44 @@ As opposed to naive implementation, the implementation relying on primitive prom
     }
 ```
 
-where \$fn_name and \$t are [identifier and type designator](https://doc.rust-lang.org/rust-by-example/macros/designators.html), respectively. The implementation was provided by [Eli Dupree](https://internals.rust-lang.org/u/elidupree) and relies on [wrapping_add], and [LSB]-[masked][bitmask] (meaning with all non-[LSB] bits masked off) bitwise AND of the arguments ("a & b & 0x1").
+where \$fn_name and \$t are [identifier and type designator](https://doc.rust-lang.org/rust-by-example/macros/designators.html), respectively. The implementation was provided by [Eli Dupree] and relies on [wrapping_add], and [LSB]-[masked][bitmask] (meaning with all non-[LSB] bits masked off) bitwise AND of the arguments ("a & b & 0x1").
 
 As opposed to previous implementations, the implementation via wrapping sum of of right-shifted arguments and the LSB-masked bitwise AND of the arguments produces the desired result regardless of the choice of primitive integer type, including signed integer types and 128-bit bit integers. For primitive signed integers, right shift (">>") corresponds to `SAR` (as opposed to `SHR` for unsigned integers) processor instruction when the compilation target uses x86 instruction set or its extension. The exact assembly can be found on [godbo.lt](https://godbo.lt/z/d133cP7oY), where one can also run [llvm-mca] on the assembly for the purpose of static performance analysis.
 
 ### Implementation via unchecked sum of of right-shifted arguments and the LSB-masked bitwise AND of the arguments
 
+```rust
+    pub fn $fn_name(a: &$t, b: &$t) -> $t {
+        // wrapping_add restricts the implementation,
+        // unchecked_add is feature-gated and unsafe but
+        // better reflects the known invariant
+        unsafe{
+            // >> compiler emits shr and sar for unsigned
+            // and signed types, respectively
+            (a >> 1)
+                // The absolute value of n >> 1 is less than
+                // or equal to the result of real division of n
+                // by 2. Therefore, the absolute value of the
+                // sum of near-halves cannot exceed neither
+                // $t::MIN nor $t::MAX 
+                .unchecked_add(b >> 1)
+                // If the least significant bit of n s.t.
+                // n=a=b is set to 0, "a & b & 0x1" is 0 and
+                // the sum of halves cannot exceed n.
+                // Otherwise, the corresponding right
+                // shift discards the least significant digit
+                // and then |2*(n >> 1)|=|n|-1.
+                // Since "a & b & 0x1" is at most 1,
+                // the expression can neither overflow nor
+                // underflow.
+                .unchecked_add(a & b & 0x1)
+        }
+    }
+```
 
+where \$fn_name and \$t are [identifier and type designator](https://doc.rust-lang.org/rust-by-example/macros/designators.html), respectively. This implementation is nearly identical to that of [Eli Dupree], yet instead of [wrapping_add] this implementation utilizes feature-gated unsafe [unchecked_add]. As the comment explains, [wrapping_add] restricts the implementation of addition, unlike [unchecked_add]. While these implementations produce the same assembly for x86 instruction set, [the author]
+
+The exact assembly can be found on [godbo.lt](https://godbolt.org/z/5bx8M7G5h), where one can also run [llvm-mca] on the assembly for the purpose of static performance analysis.
 
 # Saved work
 
@@ -116,9 +147,12 @@ As opposed to previous implementations, the implementation via wrapping sum of o
 
 [CAD97]: https://internals.rust-lang.org/u/CAD97
 [user16251]: https://internals.rust-lang.org/u/user16251
+[Eli Dupree]: https://internals.rust-lang.org/u/elidupree
+[the author]: https://github.com/JohnScience
 
 [llvm-mca]: https://www.youtube.com/watch?v=Ku2D8bjEGXk
 
 [wrapping_add]: https://doc.rust-lang.org/std/primitive.u32.html#method.wrapping_add
+[unchecked_add]: https://doc.rust-lang.org/std/primitive.u32.html#method.unchecked_add
 [LSB]: https://en.wikipedia.org/wiki/Bit_numbering#:~:text=In%20computing%2C%20the%20least%20significant,1s%20place%20of%20the%20integer.&text=The%20LSB%20is%20sometimes%20referred,digits%20further%20to%20the%20right.
 [bitmask]: https://en.wikipedia.org/wiki/Mask_(computing)
