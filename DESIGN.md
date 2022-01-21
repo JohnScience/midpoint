@@ -135,6 +135,23 @@ where \$fn_name and \$t are [identifier and type designator](https://doc.rust-la
 
 This implementation is nearly identical to that of [Eli Dupree], yet instead of [wrapping_add] this implementation utilizes feature-gated unsafe [unchecked_add]. As the comment explains, [wrapping_add] restricts the implementation of addition, unlike [unchecked_add]. While these implementations produce the same assembly for x86 instruction set, [the author] is convinced that [unchecked_add] is better because the overflow is impossible in this case (and the proof is provided). The exact assembly can be found on [godbo.lt](https://godbolt.org/z/5bx8M7G5h), where one can also run [llvm-mca] on the assembly for the purpose of static performance analysis.
 
+### Implementation via naive diff
+
+```rust
+    ($fn_name:ident, $t:ty) => {
+        pub /*unsafe*/ fn $fn_name(a: &$t, b: &$t) -> $t {
+            let midpoint_diff = (b-a)/2;
+            a + midpoint_diff
+        }
+    }
+```
+
+where \$fn_name and \$t are [identifier and type designator](https://doc.rust-lang.org/rust-by-example/macros/designators.html), respectively.
+
+As per "P0811R3: Well-behaved interpolation for numbers and pointers" by S. Davis Herring from Los Alamos National Laboratory[^2], this implementation is "the standard alternative" and...
+
+>> works for signed integers with the same sign (even if b<a), but can overflow if they have different signs. The modular arithmetic of unsigned integers does not produce the value expected for b<a because the division inherent to midpoint is not [native there](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0999r0.pdf); it instead produces the value halfway between a and the smallest modular equivalent to b that is no smaller.
+
 # Saved work
 
 [CAD97] gave the following opinion:
@@ -144,6 +161,7 @@ This implementation is nearly identical to that of [Eli Dupree], yet instead of 
 > It's a trade-off. If always rounding toward zero can be done branchless and rounding toward a can't, that'd make me more likely to support rounding toward zero, but I still think rounding toward a is more useful. (Plus, if it inlines, you can just sort a and b on input to get the the rounding you want at no cost.)
 
 [^1]: https://internals.rust-lang.org/t/average-function-for-primitives/14040
+[^2]: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0811r3.html
 
 [CAD97]: https://internals.rust-lang.org/u/CAD97
 [user16251]: https://internals.rust-lang.org/u/user16251
