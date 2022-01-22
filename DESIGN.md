@@ -192,12 +192,16 @@ and its best-effort rewrite in Rust by [the author]:
 ```rust
     pub /*const*/ fn $fn_name(a: &$t, b: &$t) -> $t {
         if a > b {
-            // In C++ conversion of a: T to U(a): make_unsigned<T>::type for minus operator merely guarantees the wrapping behavior, so the cast in Rust can be delayed to avoid dealing with unnecessary mixed type operations.
+            // In C++ conversion of a: T to U(a): make_unsigned<T>::type for minus operator merely guarantees
+            // the wrapping behavior, so the cast in Rust can be delayed to avoid dealing with unnecessary
+            // mixed type operations.
             let a_sub_b = a.wrapping_sub(*b) as <$t as EquisizedPrimitiveUnsignedInt>::EquisizedPrimitiveUnsignedInt;
             let midpoint_diff_up = (a_sub_b/2) as $t;
             a.wrapping_sub(midpoint_diff_up)
         } else {
-            // In C++ conversion of b: T to U(b): make_unsigned<T>::type for minus operator merely guarantees the wrapping behavior, so the cast in Rust can be delayed to avoid dealing with unnecessary mixed type operations.
+            // In C++ conversion of b: T to U(b): make_unsigned<T>::type for minus operator merely guarantees
+            // the wrapping behavior, so the cast in Rust can be delayed to avoid dealing with unnecessary
+            // mixed type operations.
             let b_sub_a = b.wrapping_sub(*a) as <$t as EquisizedPrimitiveUnsignedInt>::EquisizedPrimitiveUnsignedInt;
             let midpoint_diff_down = (b_sub_a/2) as $t;
             a.wrapping_add(midpoint_diff_down)
