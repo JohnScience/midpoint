@@ -135,7 +135,7 @@ where \$fn_name and \$t are [identifier and type designator](https://doc.rust-la
 
 This implementation is nearly identical to that of [Eli Dupree], yet instead of [wrapping_add] this implementation utilizes feature-gated unsafe [unchecked_add]. As the comment explains, [wrapping_add] restricts the implementation of addition, unlike [unchecked_add]. While these implementations produce the same assembly for x86 instruction set, [the author] is convinced that [unchecked_add] is better because the overflow is impossible in this case (and the proof is provided). The exact assembly can be found on [godbo.lt](https://godbolt.org/z/5bx8M7G5h), where one can also run [llvm-mca] on the assembly for the purpose of static performance analysis.
 
-### Implementation via naive diff
+### Implementation via naive midpoint diff
 
 ```rust
     ($fn_name:ident, $t:ty) => {
@@ -150,7 +150,27 @@ where \$fn_name and \$t are [identifier and type designator](https://doc.rust-la
 
 As per "P0811R3: Well-behaved interpolation for numbers and pointers" by S. Davis Herring from Los Alamos National Laboratory[^2], this implementation is "the standard alternative" and...
 
->> works for signed integers with the same sign (even if b<a), but can overflow if they have different signs. The modular arithmetic of unsigned integers does not produce the value expected for b<a because the division inherent to midpoint is not [native there](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0999r0.pdf); it instead produces the value halfway between a and the smallest modular equivalent to b that is no smaller.
+> works for signed integers with the same sign (even if b<a), but can overflow if they have different signs. The modular arithmetic of unsigned integers does not produce the value expected for b<a because the division inherent to midpoint is not [native there](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0999r0.pdf); it instead produces the value halfway between a and the smallest modular equivalent to b that is no smaller.
+
+As opposed to two previous implementations, this one performs fewer but more complex operations. In addition, as S. Davis Herring noticed, it has serious limitations that may or may not be justified.
+
+The exact assembly can be found on [godbo.lt](https://godbolt.org/z/o6fse7ha3), where one can also run [llvm-mca] on the assembly for the purpose of static performance analysis.
+
+### Implementation via less naive midpoint diff
+
+```rust
+    pub /*unsafe*/ fn $fn_name(a: &$t, b: &$t) -> $t {
+        let arg_diff = (b-a) as <$t as EquisizedPrimitiveSignedInt>::EquisizedPrimitiveSignedInt;
+        let midpoint_diff = (arg_diff/2) as $t;
+        a + midpoint_diff
+    }
+```
+
+where \$fn_name and \$t are [identifier and type designator](https://doc.rust-lang.org/rust-by-example/macros/designators.html), respectively, and `u8::EquisizedPrimitiveSignedInt` is `i8`, `i64::EquisizedPrimitiveSignedInt` is `i64`, and so on.
+
+For signed integers, ths implementation is identical to the implementation via naive diff. For unsigned integers, however, it returns the midpoint even in many cases when b<a.
+
+The exact assembly can be found on [godbo.lt](https://godbolt.org/z/6jvf7hz6b), where one can also run [llvm-mca] on the assembly for the purpose of static performance analysis.
 
 # Saved work
 
