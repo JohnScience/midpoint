@@ -52,6 +52,14 @@ Altogether, this amounts to astounding **10** different rounding behaviors **AND
 
 The main potential negative impact of this combinatorial explosion is the codebloat that may arise in the codebase of the users of the crate. In order to prevent the codebloat, the library must provide its users with a straightforward way to use only the functions that they need and warn the users against using too high variety of them.
 
+### Comments
+
+[CAD97] gave the following opinion:
+
+> Personally, I think only the first or the fifth options are really in the running to be picked. The first isn't commutative, but it has predictable and consistent behavior for ++, +-, -+, and --: bias towards the first argument. The fifth leans on the fact that integer division truncates toward zero for familiarity, and gains commutativity, but loses the consistency that midpoint(x, y) == -midpoint(-x, -y).
+>
+> It's a trade-off. If always rounding toward zero can be done branchless and rounding toward a can't, that'd make me more likely to support rounding toward zero, but I still think rounding toward a is more useful. (Plus, if it inlines, you can just sort a and b on input to get the the rounding you want at no cost.)
+
 ## Parallelism
 
 All implementations are meant to be used in single-threaded environment.
@@ -106,7 +114,8 @@ As opposed to previous implementations, the implementation via wrapping sum of o
     pub fn $fn_name(a: &$t, b: &$t) -> $t {
         // wrapping_add restricts the implementation,
         // unchecked_add is feature-gated and unsafe but
-        // better reflects the known invariant
+        // better reflects the known invariant (that the
+        // addition won't overflow)
         unsafe{
             // >> compiler emits shr and sar for unsigned
             // and signed types, respectively
@@ -140,7 +149,8 @@ This implementation is nearly identical to that of [Eli Dupree], yet instead of 
 ```rust
     ($fn_name:ident, $t:ty) => {
         pub /*unsafe*/ fn $fn_name(a: &$t, b: &$t) -> $t {
-            let midpoint_diff = (b-a)/2;
+            let arg_diff = b-a;
+            let midpoint_diff = arg_diff/2;
             a + midpoint_diff
         }
     }
@@ -152,9 +162,7 @@ As per "P0811R3: Well-behaved interpolation for numbers and pointers" by S. Davi
 
 > works for signed integers with the same sign (even if b<a), but can overflow if they have different signs. The modular arithmetic of unsigned integers does not produce the value expected for b<a because the division inherent to midpoint is not [native there](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0999r0.pdf); it instead produces the value halfway between a and the smallest modular equivalent to b that is no smaller.
 
-As opposed to two previous implementations, this one performs fewer but more complex operations. In addition, as S. Davis Herring noticed, it has serious limitations that may or may not be justified.
-
-The exact assembly can be found on [godbo.lt](https://godbolt.org/z/o6fse7ha3), where one can also run [llvm-mca] on the assembly for the purpose of static performance analysis.
+To be precise, the overflow happens when b-a > $t::MAX and underflow happens when b-a < $t::MIN. As opposed to the two previous implementations, this one performs fewer but more complex operations. In addition, as S. Davis Herring noticed, it has serious limitations that may or may not be justified. The exact assembly can be found on [godbo.lt](https://godbolt.org/z/o6fse7ha3), where one can also run [llvm-mca] on the assembly for the purpose of static performance analysis.
 
 ### Implementation via less naive midpoint diff
 
@@ -168,17 +176,35 @@ The exact assembly can be found on [godbo.lt](https://godbolt.org/z/o6fse7ha3), 
 
 where \$fn_name and \$t are [identifier and type designator](https://doc.rust-lang.org/rust-by-example/macros/designators.html), respectively, and `u8::EquisizedPrimitiveSignedInt` is `i8`, `i64::EquisizedPrimitiveSignedInt` is `i64`, and so on.
 
-For signed integers, ths implementation is identical to the implementation via naive diff. For unsigned integers, however, it returns the midpoint even in many cases when b<a.
+For signed integers, ths implementation is identical to the implementation via naive diff. For unsigned integers, however, it returns the midpoint even in cases when b<\a unless a-b > $t::EquisizedPrimitiveSignedInt::MAX or a-b < $t::EquisizedPrimitiveSignedInt::MIN. The exact assembly can be found on [godbo.lt](https://godbolt.org/z/6jvf7hz6b), where one can also run [llvm-mca] on the assembly for the purpose of static performance analysis.
 
-The exact assembly can be found on [godbo.lt](https://godbolt.org/z/6jvf7hz6b), where one can also run [llvm-mca] on the assembly for the purpose of static performance analysis.
+### C++ 20 standard library implementation
 
-# Saved work
+```c++
+    constexpr Integer midpoint(Integer a, Integer b) noexcept {
+        using U = make_unsigned_t<Integer>;
+        return a>b ? a-(U(a)-b)/2 : a+(U(b)-a)/2;
+    }
+```
 
-[CAD97] gave the following opinion:
+and its best-effort rewrite in Rust by [the author]:
 
-> Personally, I think only the first or the fifth options are really in the running to be picked. The first isn't commutative, but it has predictable and consistent behavior for ++, +-, -+, and --: bias towards the first argument. The fifth leans on the fact that integer division truncates toward zero for familiarity, and gains commutativity, but loses the consistency that midpoint(x, y) == -midpoint(-x, -y).
->
-> It's a trade-off. If always rounding toward zero can be done branchless and rounding toward a can't, that'd make me more likely to support rounding toward zero, but I still think rounding toward a is more useful. (Plus, if it inlines, you can just sort a and b on input to get the the rounding you want at no cost.)
+```rust
+    pub /*const*/ fn $fn_name(a: &$t, b: &$t) -> $t {
+        if a > b {
+            // In C++ conversion of a: T to U(a): make_unsigned<T>::type for minus operator merely guarantees the wrapping behavior, so the cast in Rust can be delayed to avoid dealing with unnecessary mixed type operations.
+            let a_sub_b = a.wrapping_sub(*b) as <$t as EquisizedPrimitiveUnsignedInt>::EquisizedPrimitiveUnsignedInt;
+            let midpoint_diff_up = (a_sub_b/2) as $t;
+            a.wrapping_sub(midpoint_diff_up)
+        } else {
+            // In C++ conversion of b: T to U(b): make_unsigned<T>::type for minus operator merely guarantees the wrapping behavior, so the cast in Rust can be delayed to avoid dealing with unnecessary mixed type operations.
+            let b_sub_a = b.wrapping_sub(*a) as <$t as EquisizedPrimitiveUnsignedInt>::EquisizedPrimitiveUnsignedInt;
+            let midpoint_diff_down = (b_sub_a/2) as $t;
+            a.wrapping_add(midpoint_diff_down)
+        }
+    }
+```
+where \$fn_name and \$t are [identifier and type designator](https://doc.rust-lang.org/rust-by-example/macros/designators.html), respectively, and `u8::EquisizedPrimitiveUnsignedInt` is `u8`, `i64::EquisizedPrimitiveUnsignedInt` is `u64`, and so on.
 
 [^1]: https://internals.rust-lang.org/t/average-function-for-primitives/14040
 [^2]: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0811r3.html
