@@ -187,24 +187,76 @@ For signed integers, ths implementation is identical to the implementation via n
     }
 ```
 
-and its best-effort rewrite in Rust by [the author]:
+which, if tersity was the priority, would be rewritten in Rust by [the author] as:
 
 ```rust
-    pub /*const*/ fn $fn_name(a: &$t, b: &$t) -> $t {
-        if a > b {
-            // In C++ conversion of a: T to U(a): make_unsigned<T>::type for minus operator merely guarantees
-            // the wrapping behavior, so the cast in Rust can be delayed to avoid dealing with **undesired**
-            // mixed type operations.
-            let a_sub_b = a.wrapping_sub(*b) as <$t as EquisizedPrimitiveUnsignedInt>::EquisizedPrimitiveUnsignedInt;
-            let midpoint_diff_up = (a_sub_b/2) as $t;
-            a.wrapping_sub(midpoint_diff_up)
-        } else {
-            // In C++ conversion of b: T to U(b): make_unsigned<T>::type for minus operator merely guarantees
-            // the wrapping behavior, so the cast in Rust can be delayed to avoid dealing with **undesired**
-            // mixed type operations.
-            let b_sub_a = b.wrapping_sub(*a) as <$t as EquisizedPrimitiveUnsignedInt>::EquisizedPrimitiveUnsignedInt;
-            let midpoint_diff_down = (b_sub_a/2) as $t;
-            a.wrapping_add(midpoint_diff_down)
+    ($fn_name:ident, $t:ty) => {
+        pub /*const*/ fn $fn_name(a: &$t, b: &$t) -> $t {
+            use EquisizedPrimitiveUnsignedInt as EPUI;
+            let u = |n: &$t| *n as <$t as EPUI>::EquisizedPrimitiveUnsignedInt;
+
+            if a > b { a - ((u(a)-u(b))/2) as $t } else { a + ((u(b)-u(a))/2) as $t }
+        }
+    }
+```
+
+where \$fn_name and \$t are [identifier and type designator](https://doc.rust-lang.org/rust-by-example/macros/designators.html), respectively, and `u8::EquisizedPrimitiveUnsignedInt` is `u8`, `i64::EquisizedPrimitiveUnsignedInt` is `u64`, and so on.
+
+However, tersity is not the uttermost quality and, while short, this implementation does not convey the ideas that the developers had in their mind when they wrote the code. So, [the author] will attempt to achieve the following: (1) explain what happens in the code and (2) optimize the code for human readability without sacrificing its performance. The baseline for future comparison will be on [godbo.lt](https://godbolt.org/z/65eaKqrWP), where one can also run [llvm-mca] on the assembly for the purpose of static performance analysis.
+
+```rust
+    ($fn_name:ident, $t:ty) => {
+        pub const fn $fn_name(a_ref: &$t, b_ref: &$t) -> $t {
+            use EquisizedPrimitiveUnsignedInt as EPUI;
+            type U = <$t as EPUI>::EquisizedPrimitiveUnsignedInt;
+
+            // Without explicit dereferencing, the function
+            // wouldn't be const-qualified. Hungarian-like notation
+            // is a necessary evil.
+            let a = *a_ref;
+            let b = *b_ref;
+            // Similarly to C++, according to Rust's reference
+            // (https://doc.rust-lang.org/reference/expressions/operator-expr.html#numeric-cast),
+            // the bit patterns (https://en.wikipedia.org/wiki/Type_conversion#:~:text=bit%20pattern)
+            // of the arguments get safely reinterpreted
+            // (https://en.wikipedia.org/wiki/Type_conversion#:~:text=interpretation%20of%20the%20bit%20pattern)
+            // at compile time as the values of the equally-sized
+            // unsigned  int via cast both in the narrow
+            // (and the broader) sense
+            // (https://en.wikipedia.org/wiki/Type_conversion#:~:text=The%20word%20cast)
+            let u_a = a as U;
+            let u_b = b as U;
+            debug_assert!( u_a == unsafe { core::mem::transmute::<$t,U>(a) });
+            debug_assert!( u_b == unsafe { core::mem::transmute::<$t,U>(b) });
+
+            // Type limit comparisons are deemed useless
+            // by the compiler but they demonstrate
+            // the known invariants to the programmer
+            #[allow(unused_comparisons)]
+            if a > b {
+                let u_a_sub_u_b = u_a-u_b;
+                debug_assert!(u_a_sub_u_b >= 0);
+                debug_assert!(u_a_sub_u_b <= U::MAX);
+                debug_assert!(U::MAX-0 == U::MAX);
+                debug_assert!(
+                    u_a_sub_u_b != U::MAX || u_a == U::MAX && u_b == 0
+                );
+                let u_midpoint_diff_down = u_a_sub_u_b/2;
+                debug_assert!(u_midpoint_diff_down >= 0);
+                debug_assert!(u_midpoint_diff_down <= U::MAX/2);
+                debug_assert!(
+                    u_midpoint_diff_down != U::MAX/2 || u_a == U::MAX && u_b == 0
+                );
+                let midpoint_diff_down = u_midpoint_diff_down as $t;
+                debug_assert!(
+                    core::any::TypeId::of::<$t>() == core::any::TypeId::of::<U>()
+                        || (U::MAX/2).to_string() == <$t>::MAX.to_string()
+                );
+                a - midpoint_diff_down
+            } else {
+                let midpoint_diff_up = ((u_b-u_a)/2) as $t;
+                a + midpoint_diff_up
+            }
         }
     }
 ```
