@@ -1,3 +1,9 @@
+#![cfg_attr(any(doc, test, doctest, feature = "const_trait_impl"), feature(const_trait_impl))]
+
+mod naive;
+
+pub use naive::NaiveMidpointExt;
+
 pub fn midpoint<T: Midpoint>(lhs: &T, rhs: &T) -> T {
     T::midpoint(lhs, rhs)
 }
