@@ -108,7 +108,7 @@ where \$fn_name and \$t are [identifier and type designator](https://doc.rust-la
 
 As opposed to previous implementations, the implementation via wrapping sum of of right-shifted arguments and the LSB-masked bitwise AND of the arguments produces the desired result regardless of the choice of primitive integer type, including signed integer types and 128-bit bit integers. For primitive signed integers, right shift (">>") corresponds to `SAR` (as opposed to `SHR` for unsigned integers) processor instruction when the compilation target uses x86 instruction set or its extension. The exact assembly can be found on [godbo.lt](https://godbo.lt/z/d133cP7oY), where one can also run [llvm-mca] on the assembly for the purpose of static performance analysis.
 
-### Implementation via unchecked sum of of right-shifted arguments and the LSB-masked bitwise AND of the arguments
+### Implementation via unchecked sum of right-shifted arguments and the LSB-masked bitwise AND of the arguments
 
 ```rust
     pub fn $fn_name(a: &$t, b: &$t) -> $t {
