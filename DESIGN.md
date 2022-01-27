@@ -204,6 +204,8 @@ where \$fn_name and \$t are [identifier and type designator](https://doc.rust-la
 
 However, tersity is not the uttermost quality and, while short, this implementation does not convey the ideas that the developers had in their mind when they wrote the code. So, [the author] will attempt to achieve the following: (1) explain what happens in the code and (2) optimize the code for human readability without sacrificing its performance. The baseline for future comparison will be on [godbo.lt](https://godbolt.org/z/65eaKqrWP), where one can also run [llvm-mca] on the assembly for the purpose of static performance analysis.
 
+The partially unfolded and partially refined (rather swollen) code is 
+
 ```rust
     ($fn_name:ident, $t:ty) => {
         pub const fn $fn_name(a_ref: &$t, b_ref: &$t) -> $t {
@@ -235,8 +237,14 @@ However, tersity is not the uttermost quality and, while short, this implementat
             #[allow(unused_comparisons)]
             if a > b {
                 let u_a_sub_u_b = u_a-u_b;
-                debug_assert!(u_a_sub_u_b >= 0);
+                // Since a > b, a-b >= 1
+                debug_assert!(u_a_sub_u_b >= 1);
                 debug_assert!(u_a_sub_u_b <= U::MAX);
+                // Ideally, there must be a constructive theorem for the lower bound
+                //
+                // In this case, the theorem that 1 is the result for
+                // every pair (u_a,u_b) of the image of [0..U::MAX - 1] under
+                // n ↦ (n+1,n)
                 debug_assert!(U::MAX-0 == U::MAX);
                 debug_assert!(
                     u_a_sub_u_b != U::MAX || u_a == U::MAX && u_b == 0
@@ -244,13 +252,21 @@ However, tersity is not the uttermost quality and, while short, this implementat
                 let u_midpoint_diff_down = u_a_sub_u_b/2;
                 debug_assert!(u_midpoint_diff_down >= 0);
                 debug_assert!(u_midpoint_diff_down <= U::MAX/2);
+                // Ideally, there must be a constructive theorem for the lower bound
                 debug_assert!(
                     u_midpoint_diff_down != U::MAX/2 || u_a == U::MAX && u_b == 0
                 );
                 let midpoint_diff_down = u_midpoint_diff_down as $t;
+                // The assert below is impossible but const_format crate
+                // allows to perform comparison of static core::str's
+                //
+                // debug_assert!(
+                //     core::any::TypeId::of::<$t>() == core::any::TypeId::of::<U>() || {
+                //         (U::MAX/2).to_string() == <$t>::MAX.to_string()
+                //     }
+                // );
                 debug_assert!(
-                    core::any::TypeId::of::<$t>() == core::any::TypeId::of::<U>()
-                        || (U::MAX/2).to_string() == <$t>::MAX.to_string()
+                    a-midpoint_diff_down == a-(((u_a - u_b)/2) as $t) 
                 );
                 a - midpoint_diff_down
             } else {
@@ -261,6 +277,8 @@ However, tersity is not the uttermost quality and, while short, this implementat
     }
 ```
 where \$fn_name and \$t are [identifier and type designator](https://doc.rust-lang.org/rust-by-example/macros/designators.html), respectively, and `u8::EquisizedPrimitiveUnsignedInt` is `u8`, `i64::EquisizedPrimitiveUnsignedInt` is `u64`, and so on.
+
+While more informative, however, this implementation does not communicate clearly the inherent near-symmetry of the algorithm. In this situtation, the best solution for uncluttering the code would be to supply external documentation for the implementation (and, potentially, develop static analysis tools for performing [bounds checking](https://en.wikipedia.org/wiki/Bounds_checking) on demand). However, [the author] is unsure what to do with communicating the near-symmetric nature of the algorithm.
 
 [^1]: https://internals.rust-lang.org/t/average-function-for-primitives/14040
 [^2]: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0811r3.html
