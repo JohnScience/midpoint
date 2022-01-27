@@ -1,8 +1,12 @@
 #![cfg_attr(any(doc, test, doctest, feature = "const_trait_impl"), feature(const_trait_impl))]
 
 mod naive;
+mod primitive_promotion;
 
-pub use naive::NaiveMidpointExt;
+// crate:: disambiguates primitive_promotion as the module import source (as opposed to crate import source)
+// Note: crate in this context is THIS crate (akin to self:: for this module and super:: for parent module)
+pub use crate::naive::NaiveMidpointExt;
+pub use crate::primitive_promotion::MidpointViaPrimitivePromotionExt;
 
 pub fn midpoint<T: Midpoint>(lhs: &T, rhs: &T) -> T {
     T::midpoint(lhs, rhs)

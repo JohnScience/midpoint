@@ -7,7 +7,7 @@
 // pub const unsafe fn naive_midpoint<T: const NaiveMidpointExt>(lhs: &T, rhs: &T) -> T {
 //     lhs.naive_midpoint(rhs)
 // }
-//
+// ```
 
 pub trait NaiveMidpointExt {
     unsafe fn naive_midpoint(&self, rhs_ref: &Self) -> Self;
