@@ -18,17 +18,8 @@ pub trait MidpointViaPrimitivePromotionExt: PP {
 }
 
 macro_rules! impl_for_t {
-    (!const, $t:ty) => {
-        impl MidpointViaPrimitivePromotionExt for $t {
-            fn midpoint_via_primitive_promotion(&self, rhs_ref: &Self) -> Self {
-                let lhs = *self as <Self as PP>::PrimitivePromotion;
-                let rhs = *rhs_ref as <Self as PP>::PrimitivePromotion;
-                ((lhs + rhs) / 2) as Self
-            }
-        }
-    };
-    (const, $t:ty) => {
-        impl const MidpointViaPrimitivePromotionExt for $t {
+    ($( #[$const_qualifier:ident] )? $t:ty) => {
+        impl $($const_qualifier)? MidpointViaPrimitivePromotionExt for $t {
             fn midpoint_via_primitive_promotion(&self, rhs_ref: &Self) -> Self {
                 let lhs = *self as <Self as PP>::PrimitivePromotion;
                 let rhs = *rhs_ref as <Self as PP>::PrimitivePromotion;
@@ -38,32 +29,20 @@ macro_rules! impl_for_t {
     };
 }
 
+macro_rules! impl_for_prim_ints_with_prim_promotion {
+    ($( #[$const_qualifier:ident] )?) => {
+        impl_for_t!($( #[$const_qualifier] )? u8);
+        impl_for_t!($( #[$const_qualifier] )? u16);
+        impl_for_t!($( #[$const_qualifier] )? u32);
+        impl_for_t!($( #[$const_qualifier] )? u64);
+        impl_for_t!($( #[$const_qualifier] )? i8);
+        impl_for_t!($( #[$const_qualifier] )? i16);
+        impl_for_t!($( #[$const_qualifier] )? i32);
+        impl_for_t!($( #[$const_qualifier] )? i64);
+    }
+}
+
 #[cfg(any(doc, test, doctest, feature = "const_trait_impl"))]
-macro_rules! impl_for_prim_ints_with_prim_promotion {
-    () => {
-        impl_for_t!(const, u8);
-        impl_for_t!(const, u16);
-        impl_for_t!(const, u32);
-        impl_for_t!(const, u64);
-        impl_for_t!(const, i8);
-        impl_for_t!(const, i16);
-        impl_for_t!(const, i32);
-        impl_for_t!(const, i64);
-    }
-}
-
+impl_for_prim_ints_with_prim_promotion!(#[const]);
 #[cfg(not(any(doc, test, doctest, feature = "const_trait_impl")))]
-macro_rules! impl_for_prim_ints_with_prim_promotion {
-    () => {
-        impl_for_t!(!const, u8);
-        impl_for_t!(!const, u16);
-        impl_for_t!(!const, u32);
-        impl_for_t!(!const, u64);
-        impl_for_t!(!const, i8);
-        impl_for_t!(!const, i16);
-        impl_for_t!(!const, i32);
-        impl_for_t!(!const, i64);
-    }
-}
-
 impl_for_prim_ints_with_prim_promotion!();

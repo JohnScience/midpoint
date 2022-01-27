@@ -2,6 +2,7 @@
 
 mod naive;
 mod primitive_promotion;
+mod bitwise;
 
 // crate:: disambiguates primitive_promotion as the module import source (as opposed to crate import source)
 // Note: crate in this context is THIS crate (akin to self:: for this module and super:: for parent module)

@@ -14,15 +14,8 @@ pub trait NaiveMidpointExt {
 }
 
 macro_rules! impl_for_t {
-    (!const, $t:ty) => {
-        impl NaiveMidpointExt for $t {
-            unsafe fn naive_midpoint(&self, rhs: &Self) -> Self {
-                (self + rhs) / 2
-            }
-        }        
-    };
-    (const, $t:ty) => {
-        impl const NaiveMidpointExt for $t {
+    ($( #[$const_qualifier:ident] )? $t:ty) => {
+        impl $($const_qualifier)? NaiveMidpointExt for $t {
             unsafe fn naive_midpoint(&self, rhs_ref: &Self) -> Self {
                 // At the time of writing, explicit dereferencing is necessary because
                 // `<&u8 as Add<&u8>>::add` is not yet stable as a const fn
@@ -37,40 +30,25 @@ macro_rules! impl_for_t {
     };
 }
 
-#[cfg(any(doc, test, doctest, feature = "const_trait_impl"))]
 macro_rules! impl_for_all_prim_ints {
-    () => {
-        impl_for_t!(const, u8);
-        impl_for_t!(const, u16);
-        impl_for_t!(const, u32);
-        impl_for_t!(const, u64);
-        impl_for_t!(const, u128);
-        impl_for_t!(const, usize);
-        impl_for_t!(const, i8);
-        impl_for_t!(const, i16);
-        impl_for_t!(const, i32);
-        impl_for_t!(const, i64);
-        impl_for_t!(const, i128);
-        impl_for_t!(const, isize);
+    ($( #[$const_qualifier:ident] )?) => {
+        impl_for_t!($( #[$const_qualifier] )? u8);
+        impl_for_t!($( #[$const_qualifier] )? u16);
+        impl_for_t!($( #[$const_qualifier] )? u32);
+        impl_for_t!($( #[$const_qualifier] )? u64);
+        impl_for_t!($( #[$const_qualifier] )? u128);
+        impl_for_t!($( #[$const_qualifier] )? usize);
+        impl_for_t!($( #[$const_qualifier] )? i8);
+        impl_for_t!($( #[$const_qualifier] )? i16);
+        impl_for_t!($( #[$const_qualifier] )? i32);
+        impl_for_t!($( #[$const_qualifier] )? i64);
+        impl_for_t!($( #[$const_qualifier] )? i128);
+        impl_for_t!($( #[$const_qualifier] )? isize);
     }
 }
+
+#[cfg(any(doc, test, doctest, feature = "const_trait_impl"))]
+impl_for_all_prim_ints!(#[const]);
 
 #[cfg(not(any(doc, test, doctest, feature = "const_trait_impl")))]
-macro_rules! impl_for_all_prim_ints {
-    () => {
-        impl_for_t!(!const, u8);
-        impl_for_t!(!const, u16);
-        impl_for_t!(!const, u32);
-        impl_for_t!(!const, u64);
-        impl_for_t!(!const, u128);
-        impl_for_t!(!const, usize);
-        impl_for_t!(!const, i8);
-        impl_for_t!(!const, i16);
-        impl_for_t!(!const, i32);
-        impl_for_t!(!const, i64);
-        impl_for_t!(!const, i128);
-        impl_for_t!(!const, isize);
-    }
-}
-
 impl_for_all_prim_ints!();
