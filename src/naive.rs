@@ -1,6 +1,6 @@
 // At the time of writing, the code below is impossible because const trait bounds in
 // constant functions are not a thing. #![feature(const_fn_trait_bound)] enables
-// (non-const) trait bounds but not const trait bounds.
+// only (non-const) trait bounds even in conjunction with #![feature(const_trait_impl)].
 //
 // ```rust
 // #[inline(always)]
@@ -16,8 +16,8 @@ pub trait NaiveMidpointExt {
 macro_rules! impl_for_t {
     (!const, $t:ty) => {
         impl NaiveMidpointExt for $t {
-            unsafe fn naive_midpoint(&self, rhs_ref: &Self) -> Self {
-                (self + rhs_ref) / 2
+            unsafe fn naive_midpoint(&self, rhs: &Self) -> Self {
+                (self + rhs) / 2
             }
         }        
     };
