@@ -11,3 +11,4 @@ primitive_promotion = "0.1.3"
 [features]
 const_trait_impl = []
 unchecked_math = []
+const_inherent_unchecked_arith = []
