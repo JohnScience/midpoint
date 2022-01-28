@@ -5,11 +5,13 @@
 mod naive;
 mod primitive_promotion;
 mod bitwise;
+mod naive_midpoint_diff;
 
 // crate:: disambiguates primitive_promotion as the module import source (as opposed to crate import source)
 // Note: crate in this context is THIS crate (akin to self:: for this module and super:: for parent module)
 pub use crate::naive::NaiveMidpointExt;
 pub use crate::primitive_promotion::MidpointViaPrimitivePromotionExt;
+pub use crate::bitwise::MidpointViaBitwiseOpsExt;
 
 pub fn midpoint<T: Midpoint>(lhs: &T, rhs: &T) -> T {
     T::midpoint(lhs, rhs)
