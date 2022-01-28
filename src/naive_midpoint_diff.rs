@@ -1,3 +1,5 @@
+use epsi::EquisizedPrimitiveSignedIntExt as EPSI;
+
 pub trait MidpointViaNaiveMidpointDiffExt {
     unsafe fn midpoint_via_naive_midpoint_diff_ext(&self, rhs_ref: &Self) -> Self;
 }
@@ -5,7 +7,6 @@ pub trait MidpointViaNaiveMidpointDiffExt {
 macro_rules! impl_midpoint_fn_for_t {
     () => {
         unsafe fn midpoint_via_naive_midpoint_diff_ext(&self, rhs_ref: &Self) -> Self {
-            use epsi::EquisizedPrimitiveSignedIntExt as EPSI;
             // At the time of writing, explicit dereferencing is necessary because
             // `<&u8 as Add<&u8>>::add` is not yet stable as a const fn
             // and requires `#![feature(const_ops)]`
