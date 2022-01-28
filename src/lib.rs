@@ -1,4 +1,5 @@
 #![cfg_attr(any(doc, test, doctest, feature = "const_trait_impl"), feature(const_trait_impl))]
+#![cfg_attr(any(doc, test, doctest, feature = "unchecked_math"), feature(unchecked_math))]
 
 mod naive;
 mod primitive_promotion;
