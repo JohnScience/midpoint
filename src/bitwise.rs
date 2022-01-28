@@ -2,7 +2,7 @@ pub trait MidpointViaBitwiseOpsExt {
     fn midpoint_via_bitwise_ops(&self, rhs: &Self) -> Self;
 }
 
-#[cfg(any(doc, test, doctest, feature = "unchecked_math"))]
+#[cfg(any(doc, test, doctest, all(feature = "unchecked_math", feature = "const_inherent_unchecked_arith")))]
 macro_rules! sum {
     (
         $half_lhs:ident,
@@ -15,7 +15,7 @@ macro_rules! sum {
     };
 }
 
-#[cfg(not(any(doc, test, doctest, feature = "unchecked_math")))]
+#[cfg(not(any(doc, test, doctest, all(feature = "unchecked_math", feature = "const_inherent_unchecked_arith"))))]
 macro_rules! sum {
     (
         $half_lhs:ident,
@@ -71,3 +71,5 @@ macro_rules! impl_for_all_prim_ints {
         impl_for_t!(isize);
     }
 }
+
+impl_for_all_prim_ints!();
