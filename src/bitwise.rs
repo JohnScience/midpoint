@@ -56,7 +56,7 @@ macro_rules! impl_for_t {
 }
 
 macro_rules! impl_for_all_prim_ints {
-    ($( #[$attr:ident] )*) => {
+    () => {
         impl_for_t!(u8);
         impl_for_t!(u16);
         impl_for_t!(u32);

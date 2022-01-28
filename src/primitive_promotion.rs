@@ -46,7 +46,7 @@ macro_rules! impl_for_t {
 }
 
 macro_rules! impl_for_prim_ints_with_prim_promotion {
-    ($( #[$const_qualifier:ident] )?) => {
+    () => {
         impl_for_t!(u8);
         impl_for_t!(u16);
         impl_for_t!(u32);
