@@ -6,7 +6,7 @@ use primitive_promotion::PrimitivePromotionExt as PP;
 //
 // ```rust
 // #[inline(always)]
-// pub const fn midpoint_via_primitive_promotion<T>(lhs: &T, rhs: &T) -> T 
+// pub const fn midpoint_via_primitive_promotion<T>(lhs: &T, rhs: &T) -> T
 // where T: const MidpointViaPrimitivePromotionExt
 // {
 //     lhs.midpoint_via_primitive_promotion(rhs)
@@ -14,6 +14,7 @@ use primitive_promotion::PrimitivePromotionExt as PP;
 // ```
 
 pub trait MidpointViaPrimitivePromotionExt: PP {
+    #[must_use]
     fn midpoint_via_primitive_promotion(&self, rhs: &Self) -> Self;
 }
 
@@ -55,7 +56,7 @@ macro_rules! impl_for_prim_ints_with_prim_promotion {
         impl_for_t!(i16);
         impl_for_t!(i32);
         impl_for_t!(i64);
-    }
+    };
 }
 
 impl_for_prim_ints_with_prim_promotion!();

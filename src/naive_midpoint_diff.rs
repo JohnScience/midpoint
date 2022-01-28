@@ -14,8 +14,8 @@ macro_rules! impl_midpoint_fn_for_t {
             // Rust unstable book entry:
             // https://doc.rust-lang.org/beta/unstable-book/library-features/const-ops.html
             let (lhs, rhs) = (*self, *rhs_ref);
-            let arg_diff = (rhs-lhs) as <Self as EPSI>::EquisizedPrimitiveSignedInt;
-            let midpoint_diff = (arg_diff/2) as Self;
+            let arg_diff = (rhs - lhs) as <Self as EPSI>::EquisizedPrimitiveSignedInt;
+            let midpoint_diff = (arg_diff / 2) as Self;
             lhs + midpoint_diff
         }
     };
@@ -53,7 +53,7 @@ macro_rules! impl_for_all_prim_ints {
         impl_for_t!(i64);
         impl_for_t!(i128);
         impl_for_t!(isize);
-    }
+    };
 }
 
 impl_for_all_prim_ints!();

@@ -10,6 +10,7 @@
 // ```
 
 pub trait NaiveMidpointExt {
+    #[must_use]
     unsafe fn naive_midpoint(&self, rhs_ref: &Self) -> Self;
 }
 
@@ -60,7 +61,7 @@ macro_rules! impl_for_all_prim_ints {
         impl_for_t!(i64);
         impl_for_t!(i128);
         impl_for_t!(isize);
-    }
+    };
 }
 
 impl_for_all_prim_ints!();
