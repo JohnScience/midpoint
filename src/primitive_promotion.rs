@@ -17,32 +17,45 @@ pub trait MidpointViaPrimitivePromotionExt: PP {
     fn midpoint_via_primitive_promotion(&self, rhs: &Self) -> Self;
 }
 
+macro_rules! impl_midpoint_fn_for_t {
+    () => {
+        fn midpoint_via_primitive_promotion(&self, rhs_ref: &Self) -> Self {
+            let lhs = *self as <Self as PP>::PrimitivePromotion;
+            let rhs = *rhs_ref as <Self as PP>::PrimitivePromotion;
+            ((lhs + rhs) / 2) as Self
+        }
+    };
+}
+
+#[cfg(any(doc, test, doctest, feature = "const_trait_impl"))]
 macro_rules! impl_for_t {
-    ($( #[$const_qualifier:ident] )? $t:ty) => {
-        impl $($const_qualifier)? MidpointViaPrimitivePromotionExt for $t {
-            fn midpoint_via_primitive_promotion(&self, rhs_ref: &Self) -> Self {
-                let lhs = *self as <Self as PP>::PrimitivePromotion;
-                let rhs = *rhs_ref as <Self as PP>::PrimitivePromotion;
-                ((lhs + rhs) / 2) as Self
-            }
-        }        
+    ($t:ty) => {
+        impl const MidpointViaPrimitivePromotionExt for $t {
+            impl_midpoint_fn_for_t!();
+        }
+    };
+}
+
+#[cfg(not(any(doc, test, doctest, feature = "const_trait_impl")))]
+macro_rules! impl_for_t {
+    ($t:ty) => {
+        impl MidpointViaPrimitivePromotionExt for $t {
+            impl_midpoint_fn_for_t!();
+        }
     };
 }
 
 macro_rules! impl_for_prim_ints_with_prim_promotion {
     ($( #[$const_qualifier:ident] )?) => {
-        impl_for_t!($( #[$const_qualifier] )? u8);
-        impl_for_t!($( #[$const_qualifier] )? u16);
-        impl_for_t!($( #[$const_qualifier] )? u32);
-        impl_for_t!($( #[$const_qualifier] )? u64);
-        impl_for_t!($( #[$const_qualifier] )? i8);
-        impl_for_t!($( #[$const_qualifier] )? i16);
-        impl_for_t!($( #[$const_qualifier] )? i32);
-        impl_for_t!($( #[$const_qualifier] )? i64);
+        impl_for_t!(u8);
+        impl_for_t!(u16);
+        impl_for_t!(u32);
+        impl_for_t!(u64);
+        impl_for_t!(i8);
+        impl_for_t!(i16);
+        impl_for_t!(i32);
+        impl_for_t!(i64);
     }
 }
 
-#[cfg(any(doc, test, doctest, feature = "const_trait_impl"))]
-impl_for_prim_ints_with_prim_promotion!(#[const]);
-#[cfg(not(any(doc, test, doctest, feature = "const_trait_impl")))]
 impl_for_prim_ints_with_prim_promotion!();
