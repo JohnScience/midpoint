@@ -25,6 +25,7 @@ mod primitive_promotion;
 pub use crate::bitwise::MidpointViaBitwiseOpsExt;
 pub use crate::cpp_20_std::MidpointViaCpp20StdImplementationExt;
 pub use crate::naive::NaiveMidpointExt;
+pub use crate::naive_midpoint_diff::MidpointViaNaiveMidpointDiffExt;
 pub use crate::primitive_promotion::MidpointViaPrimitivePromotionExt;
 
 pub fn midpoint<T: Midpoint>(lhs: &T, rhs: &T) -> T {
