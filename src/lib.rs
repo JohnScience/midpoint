@@ -12,7 +12,7 @@
 )]
 
 #[macro_use]
-mod macros;
+mod common_macros;
 
 mod bitwise;
 mod naive;

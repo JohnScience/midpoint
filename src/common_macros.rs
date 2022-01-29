@@ -16,6 +16,40 @@ macro_rules! impl_for_t {
     };
 }
 
+#[cfg(any(
+    doc,
+    test,
+    doctest,
+    all(feature = "unchecked_math", feature = "const_inherent_unchecked_arith")
+))]
+#[macro_export]
+macro_rules! sum_without_overflow {
+    ($first_e:expr, $( $e:expr ),*) => {
+        unsafe {
+            $first_e
+            $(
+                .unchecked_add($e)
+            )*
+        }
+    };
+}
+
+#[cfg(not(any(
+    doc,
+    test,
+    doctest,
+    all(feature = "unchecked_math", feature = "const_inherent_unchecked_arith")
+)))]
+#[macro_export]
+macro_rules! sum_without_overflow {
+    ($first_e:expr, $( $e:expr ),*) => {
+        $first_e
+        $(
+            .wrapping_add($e)
+        )*
+    };
+}
+
 macro_rules! impl_for_types {
     ($trait_name:ident, $fn_macro_name:ident, [$($t:ty),*]) => {
         $(
