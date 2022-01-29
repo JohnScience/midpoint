@@ -11,12 +11,12 @@
 
 pub trait NaiveMidpointExt {
     #[must_use]
-    unsafe fn naive_midpoint(&self, rhs_ref: &Self) -> Self;
+    unsafe fn naive_midpoint(&self /*lhs_ref*/, rhs_ref: &Self) -> Self;
 }
 
 macro_rules! impl_midpoint_fn_for_t {
     () => {
-        unsafe fn naive_midpoint(&self, rhs_ref: &Self) -> Self {
+        unsafe fn naive_midpoint(&self /*lhs_ref*/, rhs_ref: &Self) -> Self {
             // At the time of writing, explicit dereferencing is necessary because
             // `<&u8 as Add<&u8>>::add` is not yet stable as a const fn
             // and requires `#![feature(const_ops)]`
