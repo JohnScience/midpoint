@@ -45,7 +45,7 @@ mod tests {
 
     #[test]
     fn midpoint_via_naive_midpoint_diff_rounds_towards_left_arg_including_when_args_are_positive() {
-        let result: i32 = unsafe{ 2.midpoint_via_naive_midpoint_diff(&3) };
+        let result: i32 = unsafe { 2.midpoint_via_naive_midpoint_diff(&3) };
         assert_eq!(result, 2);
     }
 

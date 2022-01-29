@@ -56,13 +56,15 @@ mod tests {
     use crate::MidpointViaCpp20StdImplementationExt;
 
     #[test]
-    fn midpoint_via_cpp_20_std_implementation_rounds_towards_left_arg_including_when_args_are_positive() {
+    fn midpoint_via_cpp_20_std_implementation_rounds_towards_left_arg_including_when_args_are_positive(
+    ) {
         let result: i32 = 2.midpoint_via_cpp_20_std_implementation(&3);
         assert_eq!(result, 2);
     }
 
     #[test]
-    fn midpoint_via_cpp_20_std_implementation_rounds_towards_left_arg_including_when_args_are_negative() {
+    fn midpoint_via_cpp_20_std_implementation_rounds_towards_left_arg_including_when_args_are_negative(
+    ) {
         let result: i32 = (-3).midpoint_via_cpp_20_std_implementation(&-2);
         assert_eq!(result, -3);
     }

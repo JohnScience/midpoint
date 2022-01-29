@@ -40,7 +40,7 @@ mod tests {
 
     #[test]
     fn naive_midpoint_rounds_towards_zero_including_when_args_are_positive() {
-        let result: i32 =  unsafe { 2.naive_midpoint(&3) };
+        let result: i32 = unsafe { 2.naive_midpoint(&3) };
         assert_eq!(result, 2);
     }
 
