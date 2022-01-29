@@ -1,10 +1,5 @@
 use epui::EquisizedPrimitiveUnsignedIntExt as EPUI;
 
-pub trait MidpointViaCpp20StdImplementationExt {
-    #[must_use]
-    fn midpoint_via_cpp_20_std_implementation(&self, b_ref: &Self) -> Self;
-}
-
 // At the time of writing, the code below is impossible because const trait bounds in
 // constant functions are not a thing. #![feature(const_fn_trait_bound)] enables
 // only (non-const) trait bounds even in conjunction with #![feature(const_trait_impl)].
@@ -17,6 +12,11 @@ pub trait MidpointViaCpp20StdImplementationExt {
 //     lhs.midpoint_via_primitive_promotion(rhs)
 // }
 // ```
+
+pub trait MidpointViaCpp20StdImplementationExt {
+    #[must_use]
+    fn midpoint_via_cpp_20_std_implementation(&self, b_ref: &Self) -> Self;
+}
 
 macro_rules! impl_midpoint_fn_for_t {
     () => {
