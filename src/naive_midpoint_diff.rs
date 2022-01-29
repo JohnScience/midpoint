@@ -14,7 +14,7 @@ use epsi::EquisizedPrimitiveSignedIntExt as EPSI;
 // ```
 
 pub trait MidpointViaNaiveMidpointDiffExt {
-    unsafe fn midpoint_via_naive_midpoint_diff(&self, rhs_ref: &Self) -> Self;
+    unsafe fn midpoint_via_naive_midpoint_diff(&self /*lhs_ref*/, rhs_ref: &Self) -> Self;
 }
 
 macro_rules! impl_midpoint_fn_for_t {

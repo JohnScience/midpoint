@@ -13,12 +13,12 @@
 
 pub trait MidpointViaBitwiseOpsExt {
     #[must_use]
-    fn midpoint_via_bitwise_ops(&self, rhs: &Self) -> Self;
+    fn midpoint_via_bitwise_ops(&self /*lhs_ref*/, rhs_ref: &Self) -> Self;
 }
 
 macro_rules! impl_midpoint_fn_for_t {
     () => {
-        fn midpoint_via_bitwise_ops(&self, rhs_ref: &Self) -> Self {
+        fn midpoint_via_bitwise_ops(&self /*lhs_ref*/, rhs_ref: &Self) -> Self {
             // At the time of writing, explicit dereferencing is necessary because
             // `<&u8 as Add<&u8>>::add` is not yet stable as a const fn
             // and requires `#![feature(const_ops)]`

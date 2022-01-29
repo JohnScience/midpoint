@@ -15,12 +15,12 @@ use epui::EquisizedPrimitiveUnsignedIntExt as EPUI;
 
 pub trait MidpointViaCpp20StdImplementationExt {
     #[must_use]
-    fn midpoint_via_cpp_20_std_implementation(&self, b_ref: &Self) -> Self;
+    fn midpoint_via_cpp_20_std_implementation(&self /*a_ref*/, b_ref: &Self) -> Self;
 }
 
 macro_rules! impl_midpoint_fn_for_t {
     () => {
-        fn midpoint_via_cpp_20_std_implementation(&self, b_ref: &Self) -> Self {
+        fn midpoint_via_cpp_20_std_implementation(&self /*a_ref*/, b_ref: &Self) -> Self {
             // The line below is impossible due to error[E0401]:
             //  "can't use generic parameters from outer function"
             //
