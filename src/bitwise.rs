@@ -19,6 +19,12 @@ pub trait MidpointViaBitwiseOpsExt {
 macro_rules! impl_midpoint_fn_for_t {
     () => {
         fn midpoint_via_bitwise_ops(&self, rhs_ref: &Self) -> Self {
+            // At the time of writing, explicit dereferencing is necessary because
+            // `<&u8 as Add<&u8>>::add` is not yet stable as a const fn
+            // and requires `#![feature(const_ops)]`
+            //
+            // Rust unstable book entry:
+            // https://doc.rust-lang.org/beta/unstable-book/library-features/const-ops.html
             let (lhs, rhs) = (*self, *rhs_ref);
             let (half_lhs, half_rhs) = (lhs / 2, rhs / 2);
             let lsb_masked_bitwise_or = lhs & rhs & 0x1;
