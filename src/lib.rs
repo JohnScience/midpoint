@@ -11,6 +11,9 @@
     feature(const_inherent_unchecked_arith)
 )]
 
+#[macro_use]
+mod macros;
+
 mod bitwise;
 mod naive;
 mod naive_midpoint_diff;
@@ -22,6 +25,7 @@ mod cpp_20_std;
 pub use crate::bitwise::MidpointViaBitwiseOpsExt;
 pub use crate::naive::NaiveMidpointExt;
 pub use crate::primitive_promotion::MidpointViaPrimitivePromotionExt;
+pub use crate::cpp_20_std::MidpointViaCpp20StdImplementationExt;
 
 pub fn midpoint<T: Midpoint>(lhs: &T, rhs: &T) -> T {
     T::midpoint(lhs, rhs)

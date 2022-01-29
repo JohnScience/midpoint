@@ -29,39 +29,7 @@ macro_rules! impl_midpoint_fn_for_t {
     };
 }
 
-#[cfg(any(doc, test, doctest, feature = "const_trait_impl"))]
-macro_rules! impl_for_t {
-    ($trait_name:ident, $t:ty) => {
-        impl const $trait_name for $t {
-            impl_midpoint_fn_for_t!();
-        }
-    };
-}
-
-#[cfg(not(any(doc, test, doctest, feature = "const_trait_impl")))]
-macro_rules! impl_for_t {
-    ($trait_name:ident, $t:ty) => {
-        impl $trait_name for $t {
-            impl_midpoint_fn_for_t!();
-        }
-    };
-}
-
-macro_rules! impl_for_all_prim_ints {
-    ($trait_name:ident) => {
-        impl_for_t!($trait_name, u8);
-        impl_for_t!($trait_name, u16);
-        impl_for_t!($trait_name, u32);
-        impl_for_t!($trait_name, u64);
-        impl_for_t!($trait_name, u128);
-        impl_for_t!($trait_name, usize);
-        impl_for_t!($trait_name, i8);
-        impl_for_t!($trait_name, i16);
-        impl_for_t!($trait_name, i32);
-        impl_for_t!($trait_name, i64);
-        impl_for_t!($trait_name, i128);
-        impl_for_t!($trait_name, isize);
-    };
-}
-
-impl_for_all_prim_ints!(NaiveMidpointExt);
+impl_for_all_prim_ints!(
+    trait = NaiveMidpointExt,
+    fn macro = impl_midpoint_fn_for_t
+);
