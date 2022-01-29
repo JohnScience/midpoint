@@ -9,7 +9,34 @@
 // }
 // ```
 
+/// Trait providing implementation of naive midpoint algorithm
 pub trait NaiveMidpointExt {
+    /// Returns midpoint using naive algorithm. For primitive integers, the result is
+    /// rounded towards zero.
+    /// 
+    /// # Safety
+    /// The sum of arguments shoud fit into a variable of their type without overflow.
+    /// 
+    /// # Examples
+    /// 
+    /// ## Correct usage:
+    /// 
+    /// ```
+    /// use midpoint::NaiveMidpointExt;
+    /// 
+    /// let result: i32 = unsafe { 2.naive_midpoint(&3) };
+    /// assert_eq!(result, 2);
+    /// ```
+    /// 
+    /// ## Incorrect usage:
+    /// 
+    /// ```no_run
+    /// use midpoint::NaiveMidpointExt;
+    /// 
+    /// let result = unsafe { u32::MAX.naive_midpoint(&u32::MAX) };
+    /// // The assert below is not guaranteed to uphold
+    /// assert_eq!(result, u32::MAX);
+    /// ```
     #[must_use]
     unsafe fn naive_midpoint(&self /*lhs_ref*/, rhs_ref: &Self) -> Self;
 }
