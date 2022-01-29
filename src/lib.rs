@@ -15,17 +15,17 @@
 mod common_macros;
 
 mod bitwise;
+mod cpp_20_std;
 mod naive;
 mod naive_midpoint_diff;
 mod primitive_promotion;
-mod cpp_20_std;
 
 // crate:: disambiguates primitive_promotion as the module import source (as opposed to crate import source)
 // Note: crate in this context is THIS crate (akin to self:: for this module and super:: for parent module)
 pub use crate::bitwise::MidpointViaBitwiseOpsExt;
+pub use crate::cpp_20_std::MidpointViaCpp20StdImplementationExt;
 pub use crate::naive::NaiveMidpointExt;
 pub use crate::primitive_promotion::MidpointViaPrimitivePromotionExt;
-pub use crate::cpp_20_std::MidpointViaCpp20StdImplementationExt;
 
 pub fn midpoint<T: Midpoint>(lhs: &T, rhs: &T) -> T {
     T::midpoint(lhs, rhs)

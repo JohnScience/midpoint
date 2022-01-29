@@ -33,14 +33,14 @@ macro_rules! impl_midpoint_fn_for_t {
             // Rust unstable book entry:
             // https://doc.rust-lang.org/beta/unstable-book/library-features/const-ops.html
             let (a, b) = (*self, *b_ref);
-            let (u_a,u_b) = (
+            let (u_a, u_b) = (
                 a as <Self as EPUI>::EquisizedPrimitiveUnsignedInt,
                 b as <Self as EPUI>::EquisizedPrimitiveUnsignedInt,
             );
             if a > b {
-                a.wrapping_sub(((u_a-u_b)/2) as Self) 
+                a.wrapping_sub(((u_a - u_b) / 2) as Self)
             } else {
-                a.wrapping_add(((u_b-u_a)/2) as Self)
+                a.wrapping_add(((u_b - u_a) / 2) as Self)
             }
         }
     };

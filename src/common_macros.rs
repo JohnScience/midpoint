@@ -64,10 +64,7 @@ macro_rules! impl_for_all_prim_ints {
         impl_for_types!(
             $trait_name,
             $fn_macro_name,
-            [
-                u8, u16, u32, u64, u128, usize,
-                i8, i16, i32, i64, i128, isize
-            ]
+            [u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize]
         );
     };
 }
@@ -78,10 +75,7 @@ macro_rules! impl_for_prim_ints_with_prim_promotion {
         impl_for_types!(
             $trait_name,
             $fn_macro_name,
-            [
-                u8, u16, u32, u64,
-                i8, i16, i32, i64
-            ]
+            [u8, u16, u32, u64, i8, i16, i32, i64]
         );
     };
 }
