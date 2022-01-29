@@ -21,7 +21,7 @@ pub trait MidpointViaNaiveMidpointDiffExt {
     ///
     /// # Safety
     /// Difference of the second argument and the first argument must fit in
-    /// <T as [EPSI]>::[EquisizedPrimitiveSignedInt](https://docs.rs/epsi/latest/epsi/trait.EquisizedPrimitiveSignedIntExt.html#associatedtype.EquisizedPrimitiveSignedInt)
+    /// <Self as [EPSI]>::[EquisizedPrimitiveSignedInt](https://docs.rs/epsi/latest/epsi/trait.EquisizedPrimitiveSignedIntExt.html#associatedtype.EquisizedPrimitiveSignedInt)
     ///
     /// # Examples
     ///
