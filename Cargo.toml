@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 primitive_promotion = "0.1.3"
 epsi = "0.1.1"
+epui = "0.1.1"
 
 [features]
 const_trait_impl = []

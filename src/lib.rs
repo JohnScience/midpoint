@@ -15,6 +15,7 @@ mod bitwise;
 mod naive;
 mod naive_midpoint_diff;
 mod primitive_promotion;
+mod cpp_20_std;
 
 // crate:: disambiguates primitive_promotion as the module import source (as opposed to crate import source)
 // Note: crate in this context is THIS crate (akin to self:: for this module and super:: for parent module)
