@@ -41,3 +41,20 @@ impl_for_prim_ints_with_prim_promotion!(
     trait = MidpointViaPrimitivePromotionExt,
     fn macro = impl_midpoint_fn_for_t
 );
+
+#[cfg(test)]
+mod tests {
+    use crate::MidpointViaPrimitivePromotionExt;
+
+    #[test]
+    fn midpoint_via_primitive_promotion_rounds_towards_zero_including_when_args_are_positive() {
+        let result: i32 = 2.midpoint_via_primitive_promotion(&3);
+        assert_eq!(result, 2);
+    }
+
+    #[test]
+    fn midpoint_via_primitive_promotion_rounds_towards_zero_including_when_args_are_negative() {
+        let result: i32 = (-3).midpoint_via_primitive_promotion(&-2);
+        assert_eq!(result, -2);
+    }
+}

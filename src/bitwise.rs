@@ -37,3 +37,20 @@ impl_for_all_prim_ints!(
     trait = MidpointViaBitwiseOpsExt,
     fn macro = impl_midpoint_fn_for_t
 );
+
+#[cfg(test)]
+mod tests {
+    use crate::MidpointViaBitwiseOpsExt;
+
+    #[test]
+    fn midpoint_via_bitwise_ops_rounds_towards_zero_including_when_args_are_positive() {
+        let result: i32 = 2.midpoint_via_bitwise_ops(&3);
+        assert_eq!(result, 2);
+    }
+
+    #[test]
+    fn midpoint_via_bitwise_ops_rounds_towards_zero_including_when_args_are_negative() {
+        let result: i32 = (-3).midpoint_via_bitwise_ops(&-2);
+        assert_eq!(result, -2);
+    }
+}

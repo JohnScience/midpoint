@@ -33,3 +33,20 @@ impl_for_all_prim_ints!(
     trait = NaiveMidpointExt,
     fn macro = impl_midpoint_fn_for_t
 );
+
+#[cfg(test)]
+mod tests {
+    use crate::NaiveMidpointExt;
+
+    #[test]
+    fn naive_midpoint_rounds_towards_zero_including_when_args_are_positive() {
+        let result: i32 =  unsafe { 2.naive_midpoint(&3) };
+        assert_eq!(result, 2);
+    }
+
+    #[test]
+    fn naive_midpoint_rounds_towards_zero_including_when_args_are_negative() {
+        let result: i32 = unsafe { (-3).naive_midpoint(&-2) };
+        assert_eq!(result, -2);
+    }
+}
