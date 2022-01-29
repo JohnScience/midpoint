@@ -13,7 +13,19 @@ use primitive_promotion::PrimitivePromotionExt as PP;
 // }
 // ```
 
+/// Extension trait providing implementation of midpoint algorithm via [primitive promotion][PP].
 pub trait MidpointViaPrimitivePromotionExt: PP {
+    /// Returns midpoint using algorithm based on [primitive promotion][PP].
+    /// For primitive integers, the result is rounded towards zero.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use midpoint::MidpointViaPrimitivePromotionExt;
+    /// 
+    /// let result: i32 = (-3).midpoint_via_primitive_promotion(&-2);
+    /// assert_eq!(result, -2);
+    /// ```
     #[must_use]
     fn midpoint_via_primitive_promotion(&self /*lhs_ref*/, rhs_ref: &Self) -> Self;
 }
