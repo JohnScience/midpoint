@@ -11,7 +11,21 @@
 // }
 // ```
 
+/// Extension trait providing implementation of midpoint algorithm via
+/// [bitwise operations](https://en.wikipedia.org/wiki/Bitwise_operation).
 pub trait MidpointViaBitwiseOpsExt {
+    /// Returns midpoint using algorithm using
+    /// [bitwise operations](https://en.wikipedia.org/wiki/Bitwise_operation).
+    /// For primitive integers, the result is rounded towards zero.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use midpoint::MidpointViaBitwiseOpsExt;
+    /// 
+    /// let result: i32 = (-7).midpoint_via_bitwise_ops(&-2);
+    /// assert_eq!(result, -4);
+    /// ```
     #[must_use]
     fn midpoint_via_bitwise_ops(&self /*lhs_ref*/, rhs_ref: &Self) -> Self;
 }
@@ -26,6 +40,7 @@ macro_rules! impl_midpoint_fn_for_t {
             // Rust unstable book entry:
             // https://doc.rust-lang.org/beta/unstable-book/library-features/const-ops.html
             let (lhs, rhs) = (*self, *rhs_ref);
+            // Equivalent to SAR or SHR depending on signedness
             let (half_lhs, half_rhs) = (lhs / 2, rhs / 2);
             let lsb_masked_bitwise_or = lhs & rhs & 0x1;
             sum_without_overflow!(half_lhs, half_rhs, lsb_masked_bitwise_or)
