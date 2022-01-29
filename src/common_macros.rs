@@ -1,5 +1,5 @@
 #[cfg(any(doc, test, doctest, feature = "const_trait_impl"))]
-macro_rules! impl_for_t {
+macro_rules! provide_trait_impl_for_t {
     ($trait_name:ident, $fn_macro_name:ident, $t:ty) => {
         impl const $trait_name for $t {
             $fn_macro_name!();
@@ -8,7 +8,7 @@ macro_rules! impl_for_t {
 }
 
 #[cfg(not(any(doc, test, doctest, feature = "const_trait_impl")))]
-macro_rules! impl_for_t {
+macro_rules! provide_trait_impl_for_t {
     ($trait_name:ident, $fn_macro_name:ident, $t:ty) => {
         impl $trait_name for $t {
             $fn_macro_name!();
@@ -53,7 +53,7 @@ macro_rules! sum_without_overflow {
 macro_rules! impl_for_types {
     ($trait_name:ident, $fn_macro_name:ident, [$($t:ty),+]) => {
         $(
-            impl_for_t!($trait_name, $fn_macro_name, $t);
+            provide_trait_impl_for_t!($trait_name, $fn_macro_name, $t);
         )*
     };
 }
