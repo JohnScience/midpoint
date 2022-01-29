@@ -24,7 +24,7 @@ macro_rules! impl_for_t {
 ))]
 #[macro_export]
 macro_rules! sum_without_overflow {
-    ($first_e:expr, $( $e:expr ),*) => {
+    ($first_e:expr, $( $e:expr ),+) => {
         unsafe {
             $first_e
             $(
@@ -42,7 +42,7 @@ macro_rules! sum_without_overflow {
 )))]
 #[macro_export]
 macro_rules! sum_without_overflow {
-    ($first_e:expr, $( $e:expr ),*) => {
+    ($first_e:expr, $( $e:expr ),+) => {
         $first_e
         $(
             .wrapping_add($e)
@@ -51,7 +51,7 @@ macro_rules! sum_without_overflow {
 }
 
 macro_rules! impl_for_types {
-    ($trait_name:ident, $fn_macro_name:ident, [$($t:ty),*]) => {
+    ($trait_name:ident, $fn_macro_name:ident, [$($t:ty),+]) => {
         $(
             impl_for_t!($trait_name, $fn_macro_name, $t);
         )*
