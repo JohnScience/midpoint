@@ -22,6 +22,7 @@ include = [
     "/LICENSE_MIT",
     "/README.md",
     "/src/**",
+    "/benches/**"
 ]
 # publish | not needed
 # metadata | not needed
