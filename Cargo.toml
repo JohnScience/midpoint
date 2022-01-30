@@ -1,17 +1,17 @@
 [package]
 name = "midpoint"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Dmitrii Demenev <demenev.dmitriy1@gmail.com>"]
 edition = "2021"
 #rust-version = "1.56.1"  #https://github.com/foresterre/cargo-msrv
-description = "Midpoint [currently, only for primitive integers]."
+description = "Extension traits offering implementations of midpoint [currently, only for primitive integers]."
 documentation = "https://docs.rs/midpoint"
 readme = "README.md"
 repository = "https://github.com/JohnScience/midpoint"
 license = "MIT OR Apache-2.0"
 # license-file | not needed
 keywords = ["extension", "midpoint", "average", "mean"]
-categories = ["no-std"]
+categories = ["no-std", "mathematics"] # https://crates.io/category_slugs 
 # workspace | not needed
 # build | not needed
 # links | not needed

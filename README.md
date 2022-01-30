@@ -10,7 +10,8 @@ This library provides several implementations of two-place midpoint function \[c
 
 ```toml
 [dependencies]
-midpoint = { version = "0.1.0", features = ["all"] }
+# Remove features = ["all"] if on stable Rust
+midpoint = { version = "0.1.1", features = ["all"] }
 ```
 
 ## src/main.rs
@@ -18,6 +19,8 @@ midpoint = { version = "0.1.0", features = ["all"] }
 ```rust
 use midpoint::MidpointViaPrimitivePromotionExt;
 
+// With features = ["all"] or features = ["const_trait_impl", ...] the call can be
+// performed in constant context, such as const fn
 let result: i32 = (-7).midpoint_via_primitive_promotion(&-2);
 assert_eq!(result, -4);
 ```
