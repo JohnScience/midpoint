@@ -1,3 +1,5 @@
+#![doc = include_str!("../README.md")]
+#![no_std]
 #![cfg_attr(
     any(doc, test, doctest, feature = "const_trait_impl"),
     feature(const_trait_impl)
