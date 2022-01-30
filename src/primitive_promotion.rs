@@ -17,12 +17,12 @@ use primitive_promotion::PrimitivePromotionExt as PP;
 pub trait MidpointViaPrimitivePromotionExt: PP {
     /// Returns midpoint using algorithm based on [primitive promotion][PP].
     /// For primitive integers, the result is rounded towards zero.
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```
     /// use midpoint::MidpointViaPrimitivePromotionExt;
-    /// 
+    ///
     /// let result: i32 = (-3).midpoint_via_primitive_promotion(&-2);
     /// assert_eq!(result, -2);
     /// ```

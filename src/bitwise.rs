@@ -17,12 +17,12 @@ pub trait MidpointViaBitwiseOpsExt {
     /// Returns midpoint using algorithm using
     /// [bitwise operations](https://en.wikipedia.org/wiki/Bitwise_operation).
     /// For primitive integers, the result is rounded towards zero.
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```
     /// use midpoint::MidpointViaBitwiseOpsExt;
-    /// 
+    ///
     /// let result: i32 = (-7).midpoint_via_bitwise_ops(&-2);
     /// assert_eq!(result, -4);
     /// ```

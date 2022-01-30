@@ -30,7 +30,7 @@ pub trait MidpointViaNaiveMidpointDiffExt {
     /// ```
     /// use midpoint::MidpointViaNaiveMidpointDiffExt;
     /// use epsi::EquisizedPrimitiveSignedIntExt as EPSI;
-    /// 
+    ///
     /// let rhs = <u32 as EPSI>::EquisizedPrimitiveSignedInt::MAX as u32;
     /// let lhs = 0u32;
     /// let result: u32 = unsafe { (lhs).midpoint_via_naive_midpoint_diff(&rhs) };
@@ -42,7 +42,7 @@ pub trait MidpointViaNaiveMidpointDiffExt {
     /// ```should_panic
     /// use midpoint::MidpointViaNaiveMidpointDiffExt;
     /// use epsi::EquisizedPrimitiveSignedIntExt as EPSI;
-    /// 
+    ///
     /// // Even after +1, the value fits in u32
     /// let rhs = <u32 as EPSI>::EquisizedPrimitiveSignedInt::MAX as u32 + 1;
     /// let lhs = 0u32;
@@ -107,7 +107,7 @@ mod tests {
         let rhs = <u32 as EPSI>::EquisizedPrimitiveSignedInt::MAX as u32;
         let lhs = 0u32;
         let result: u32 = unsafe { (lhs).midpoint_via_naive_midpoint_diff(&rhs) };
-        assert_eq!(result, (i32::MAX/2) as u32);
+        assert_eq!(result, (i32::MAX / 2) as u32);
     }
 
     #[test]
@@ -115,6 +115,6 @@ mod tests {
         let rhs = i32::MIN;
         let lhs = 0i32;
         let result = unsafe { (lhs).midpoint_via_naive_midpoint_diff(&rhs) };
-        assert_eq!(result, i32::MIN/2);
+        assert_eq!(result, i32::MIN / 2);
     }
 }

@@ -30,7 +30,7 @@ macro_rules! impl_midpoint_fn_for_t {
         ///
         /// ```
         /// use midpoint::MidpointViaCpp20StdImplementationExt;
-        /// 
+        ///
         /// let result: i32 = (-3).midpoint_via_cpp_20_std_implementation(&-2);
         /// assert_eq!(result, -3);
         /// ```
