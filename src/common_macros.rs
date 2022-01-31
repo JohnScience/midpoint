@@ -16,6 +16,8 @@ macro_rules! provide_trait_impl_for_t {
     };
 }
 
+/// Macro generating a sum of arguments assuming overflow is impossible.
+/// 
 /// When compiled with 
 /// ```ignore
 /// #[cfg(any(
