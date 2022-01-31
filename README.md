@@ -25,7 +25,8 @@ const_inherent_unchecked_arith = ["midpoint/const_inherent_unchecked_arith"]
 ```rust
 use midpoint::MidpointViaPrimitivePromotionExt;
 
-// With features = ["all"] or features = ["const_trait_impl", ...] the call can be
+// With features = ["all"] or 
+// features = ["const_trait_impl", ...] the call can be
 // performed in constant context, such as const fn
 let result: i32 = (-7).midpoint_via_primitive_promotion(&-2);
 assert_eq!(result, -4);
