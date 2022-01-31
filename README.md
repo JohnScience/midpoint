@@ -10,8 +10,14 @@ This library provides several implementations of two-place midpoint function \[c
 
 ```toml
 [dependencies]
-# Remove features = ["all"] if on stable Rust
-midpoint = { version = "0.1.1", features = ["all"] }
+midpoint = { version = "0.1.2" }
+
+# Read more about features here: https://doc.rust-lang.org/cargo/reference/features.html#dependency-features
+[features]
+all = ["const_trait_impl", "unchecked_math", "const_inherent_unchecked_arith"]
+const_trait_impl = ["midpoint/const_trait_impl"]
+unchecked_math = ["midpoint/unchecked_math"]
+const_inherent_unchecked_arith = ["midpoint/const_inherent_unchecked_arith"]
 ```
 
 ## src/main.rs
