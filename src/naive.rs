@@ -9,7 +9,8 @@
 // }
 // ```
 
-/// Extension trait providing implementation of naive midpoint algorithm
+/// Extension trait providing implementation of naive midpoint algorithm.
+/// For primitive integers, the result is rounded towards zero.
 pub trait NaiveMidpointExt {
     /// Returns midpoint using naive algorithm. For primitive integers, the result is
     /// rounded towards zero.

@@ -14,6 +14,7 @@ use primitive_promotion::PrimitivePromotionExt as PP;
 // ```
 
 /// Extension trait providing implementation of midpoint algorithm via [primitive promotion][PP].
+/// For primitive integers, the result is rounded towards zero.
 pub trait MidpointViaPrimitivePromotionExt: PP {
     /// Returns midpoint using algorithm based on [primitive promotion][PP].
     /// For primitive integers, the result is rounded towards zero.

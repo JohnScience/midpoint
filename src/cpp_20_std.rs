@@ -14,7 +14,8 @@ use epui::EquisizedPrimitiveUnsignedIntExt as EPUI;
 // ```
 
 /// Extension trait providing implementation of midpoint algorithm [as suggested for
-/// C++20 standard library](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0811r3.html)
+/// C++20 standard library](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0811r3.html).
+/// For primitive integers, the result is rounded towards left argument.
 pub trait MidpointViaCpp20StdImplementationExt {
     #[must_use]
     fn midpoint_via_cpp_20_std_implementation(&self /*a_ref*/, b_ref: &Self) -> Self;

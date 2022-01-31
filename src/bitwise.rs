@@ -13,6 +13,7 @@
 
 /// Extension trait providing implementation of midpoint algorithm via
 /// [bitwise operations](https://en.wikipedia.org/wiki/Bitwise_operation).
+/// For primitive integers, the result is rounded towards zero.
 pub trait MidpointViaBitwiseOpsExt {
     /// Returns midpoint using algorithm using
     /// [bitwise operations](https://en.wikipedia.org/wiki/Bitwise_operation).

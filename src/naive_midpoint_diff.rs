@@ -14,7 +14,7 @@ use epsi::EquisizedPrimitiveSignedIntExt as EPSI;
 // ```
 
 /// Extension trait providing implementation of midpoint algorithm via naive midpoint
-/// difference
+/// difference. For primitive integers, the result is rounded towards left argument.
 pub trait MidpointViaNaiveMidpointDiffExt {
     /// Returns midpoint using algorithm naively relying on the difference of arguments.
     /// For primitive integers, the result is rounded towards left argument.
