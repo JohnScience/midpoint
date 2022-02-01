@@ -14,8 +14,9 @@ midpoint = { version = "0.1.2" }
 
 # Read more about features here: https://doc.rust-lang.org/cargo/reference/features.html#dependency-features
 [features]
-all = ["const_trait_impl", "unchecked_math", "const_inherent_unchecked_arith"]
+all = ["const_trait_impl", "const_fn_trait_bound", "unchecked_math", "const_inherent_unchecked_arith"]
 const_trait_impl = ["midpoint/const_trait_impl"]
+const_fn_trait_bound = ["midpoint/const_fn_trait_bound"]
 unchecked_math = ["midpoint/unchecked_math"]
 const_inherent_unchecked_arith = ["midpoint/const_inherent_unchecked_arith"]
 ```

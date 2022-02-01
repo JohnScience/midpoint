@@ -1,13 +1,6 @@
-// At the time of writing, the code below is impossible because const trait bounds in
-// constant functions are not a thing. #![feature(const_fn_trait_bound)] enables
-// only (non-const) trait bounds even in conjunction with #![feature(const_trait_impl)].
-//
-// ```rust
-// #[inline(always)]
-// pub const unsafe fn naive_midpoint<T: const NaiveMidpointExt>(lhs: &T, rhs: &T) -> T {
-//     lhs.naive_midpoint(rhs)
-// }
-// ```
+try_impl_unsafe_generic_const_fn_for_trait!(
+    NaiveMidpointExt::naive_midpoint
+);
 
 /// Extension trait providing implementation of naive midpoint algorithm.
 /// For primitive integers, the result is rounded towards zero.

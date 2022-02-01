@@ -50,6 +50,7 @@ macro_rules! provide_trait_impl_for_t {
     doctest,
     all(feature = "unchecked_math", feature = "const_inherent_unchecked_arith")
 ))]
+#[doc(hidden)]
 #[macro_export]
 macro_rules! sum_without_overflow {
     ($first_e:expr, $( $e:expr ),+) => {
@@ -68,6 +69,7 @@ macro_rules! sum_without_overflow {
     doctest,
     all(feature = "unchecked_math", feature = "const_inherent_unchecked_arith")
 )))]
+#[doc(hidden)]
 #[macro_export]
 macro_rules! sum_without_overflow {
     ($first_e:expr, $( $e:expr ),+) => {
@@ -88,6 +90,7 @@ macro_rules! impl_for_types {
 
 /// Implements a trait with the supplied name for all primitive
 /// integers using function body returned by the macro
+#[doc(hidden)]
 #[macro_export]
 macro_rules! impl_for_all_prim_ints {
     (trait = $trait_name:ident, fn macro = $fn_macro_name:ident) => {
@@ -102,6 +105,7 @@ macro_rules! impl_for_all_prim_ints {
 /// Implements a trait with the supplied name for all primitive
 /// integers with primitive promotion using function body returned
 /// by the macro
+#[doc(hidden)]
 #[macro_export]
 macro_rules! impl_for_prim_ints_with_prim_promotion {
     (trait = $trait_name:ident, fn macro = $fn_macro_name:ident) => {
@@ -111,4 +115,40 @@ macro_rules! impl_for_prim_ints_with_prim_promotion {
             [u8, u16, u32, u64, i8, i16, i32, i64]
         );
     };
+}
+
+#[cfg(any(doc, test, doctest, all(feature = "const_trait_impl", feature = "const_fn_trait_bound")))]
+macro_rules! try_impl_generic_const_fn_for_trait {
+    ($trait_name:ident::$fn_name:ident) => {
+        #[doc = concat!("Internally calls the midpoint implementation provided by [", stringify!($trait_name), "] trait")]
+        #[inline(always)]
+        pub const fn $fn_name<T>(lhs: &T, rhs: &T) -> T
+        where T: ~const $trait_name
+        {
+            lhs.$fn_name(rhs)
+        }
+    };
+}
+
+#[cfg(any(doc, test, doctest, all(feature = "const_trait_impl", feature = "const_fn_trait_bound")))]
+macro_rules! try_impl_unsafe_generic_const_fn_for_trait {
+    ($trait_name:ident::$fn_name:ident) => {
+        #[doc = concat!("Internally calls the midpoint implementation provided by [", stringify!($trait_name), "] trait")]
+        #[inline(always)]
+        pub const unsafe fn $fn_name<T>(lhs: &T, rhs: &T) -> T
+        where T: ~const $trait_name
+        {
+            lhs.$fn_name(rhs)
+        }
+    };
+}
+
+#[cfg(not(any(doc, test, doctest, all(feature = "const_trait_impl", feature = "const_fn_trait_bound"))))]
+macro_rules! try_impl_unsafe_generic_const_fn_for_trait {
+    ($trait_name:ident::$fn_name:ident) => {};
+}
+
+#[cfg(not(any(doc, test, doctest, all(feature = "const_trait_impl", feature = "const_fn_trait_bound"))))]
+macro_rules! try_impl_generic_const_fn_for_trait {
+    ($trait_name:ident::$fn_name:ident) => {};
 }

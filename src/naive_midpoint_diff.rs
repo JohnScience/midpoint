@@ -1,17 +1,8 @@
 use epsi::EquisizedPrimitiveSignedIntExt as EPSI;
 
-// At the time of writing, the code below is impossible because const trait bounds in
-// constant functions are not a thing. #![feature(const_fn_trait_bound)] enables
-// only (non-const) trait bounds even in conjunction with #![feature(const_trait_impl)].
-//
-// ```rust
-// #[inline(always)]
-// pub const fn midpoint_via_primitive_promotion<T>(lhs: &T, rhs: &T) -> T
-// where T: const MidpointViaPrimitivePromotionExt
-// {
-//     lhs.midpoint_via_primitive_promotion(rhs)
-// }
-// ```
+try_impl_unsafe_generic_const_fn_for_trait!(
+    MidpointViaNaiveMidpointDiffExt::midpoint_via_naive_midpoint_diff
+);
 
 /// Extension trait providing implementation of midpoint algorithm via naive midpoint
 /// difference. For primitive integers, the result is rounded towards left argument.

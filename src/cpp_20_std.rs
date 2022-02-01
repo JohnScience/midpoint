@@ -1,17 +1,8 @@
 use epui::EquisizedPrimitiveUnsignedIntExt as EPUI;
 
-// At the time of writing, the code below is impossible because const trait bounds in
-// constant functions are not a thing. #![feature(const_fn_trait_bound)] enables
-// only (non-const) trait bounds even in conjunction with #![feature(const_trait_impl)].
-//
-// ```rust
-// #[inline(always)]
-// pub const fn midpoint_via_primitive_promotion<T>(lhs: &T, rhs: &T) -> T
-// where T: const MidpointViaPrimitivePromotionExt
-// {
-//     lhs.midpoint_via_primitive_promotion(rhs)
-// }
-// ```
+try_impl_generic_const_fn_for_trait!(
+    MidpointViaCpp20StdImplementationExt::midpoint_via_cpp_20_std_implementation
+);
 
 /// Extension trait providing implementation of midpoint algorithm [as suggested for
 /// C++20 standard library](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0811r3.html).
