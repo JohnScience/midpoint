@@ -10,7 +10,7 @@ This library provides several implementations of two-place midpoint function \[c
 
 ```toml
 [dependencies]
-midpoint = { version = "0.1.2" }
+midpoint = { version = "0.1.5" }
 
 # Read more about features here: https://doc.rust-lang.org/cargo/reference/features.html#dependency-features
 [features]
