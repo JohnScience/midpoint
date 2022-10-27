@@ -33,6 +33,12 @@ let result: i32 = (-7).midpoint_via_primitive_promotion(&-2);
 assert_eq!(result, -4);
 ```
 
+# Motivation
+
+![video screenshot](https://i.imgur.com/iCvb8wQ.png)
+
+[CppCon 2019: Marshall Clow “std::midpoint? How Hard Could it Be?”](https://www.youtube.com/watch?v=sBtAGxBh-XI)
+
 # License
 
 <sup>
