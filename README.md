@@ -39,6 +39,12 @@ assert_eq!(result, -4);
 
 [CppCon 2019: Marshall Clow “std::midpoint? How Hard Could it Be?”](https://www.youtube.com/watch?v=sBtAGxBh-XI)
 
+Related talk:
+
+![video screenshot](https://i.imgur.com/FoMVd44.png)
+
+[Lightning Talk: Finding the Average of 2 Integers - Tomer Vromen - CppCon 2022](https://www.youtube.com/watch?v=rUt9xcPyKEY)
+
 # License
 
 <sup>
